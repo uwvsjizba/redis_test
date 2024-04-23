@@ -1,0 +1,26 @@
+{
+  "name": "redis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config ./config/webpack.prod.js",
+    "dev": "webpack serve --config ./config/webpack.dev.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^7.1.1",
+    "eslint": "^8.57.0",
+    "eslint-webpack-plugin": "^4.1.0",
+    "html-webpack-plugin": "^5.6.0",
+    "sass": "^1.75.0",
+    "sass-loader": "^14.2.1",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  }
+}
