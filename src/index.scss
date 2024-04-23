@@ -1,3 +1,160 @@
-div {
+.header {
+    min-height: 60px;
+    width: 100%;
+    background-color: rgb(0, 187, 255);
+    box-shadow: 2px 2px 2px rgba($color: #000000, $alpha: .2);
+    color: #ffffff;
+    padding: 0 100px;
+
+    span {
+        line-height: 60px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+}
+
+.container {
+    overflow: hidden;
+    width: max-content;
+    min-height: 500px;
+    border-radius: 15px;
+    padding: 20px 40px;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba($color: #fff, $alpha: 0.8);
+    box-shadow: 2px 2px 2px 2px rgba($color: #000000, $alpha: 0.2);
+
+    #section-head {
+        height: 50px;
+        width: 100%;
+        display: flex;
+        border-bottom: 1px solid #cfcfcf;
+        margin-bottom: 20px;
+        .login,
+        .register {
+            text-align: center;
+            width: 70px;
+            // height: ;
+            padding: 10px;
+            color: #00bfff;
+            font-size: 20px;
+            line-height: 30px;
+            border-radius: 10px;
+            span {
+                cursor: pointer;
+                transition: all 50ms ease-in-out;
+            }
+
+            span:hover {
+                font-size: 25px;
+                font-weight: 600;
+            }
+        }
+        .login:hover,
+        .register:hover {
+            background-color: #ffffff;
+        }
+
+    }
+
+    #form-container {
+        width: 100%;
+        height: inherit;
+        overflow: hidden;
+        display: flex;
+        
+        #login-form {
+            // display: none;
+            padding: 0 10px;
+            // flex-shrink: 0;
+            width: inherit;
+            height: 100%;
+            .login-input-item {
+                display: flex;
+                padding: 10px 5px;
+                align-items: center;
+                .item-title {
+                    width: 70px;
+                }
+            }
+        }
+        .register-form{
+            display: none;
+            // flex-shrink: 0;
+            width: inherit;
+            height: 100%;
+            padding: 0 10px;
+            .register-input-item {
+                display: flex;
+                padding: 10px 5px;
+                align-items: center;
+                .item-title {
+                    width: 70px;
+                }
+                .authInput {
+                    width: 90px;
+                }
+                .authbtn {
+                    margin-left: 10px;
+                    border-radius: 10px;
+                    padding: 8px 15px;
+                    background-color: #ffb300;
+                }
+            }
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+* {
     box-sizing: border-box;
+    user-select: none;
+
+}
+
+input {
+    border: 1px solid #aaaaaa;
+    border-radius: 5px;
+    outline-color: #00bfff;
+    padding: 5px;
+    font-size: 15px;
+    color: #2f2f2f;
+}
+
+body {
+    padding: initial;
+    margin: initial;
+    background-image: url(https://ts1.cn.mm.bing.net/th/id/R-C.56ab5704680b6574c1b3c0a52643d8b5?rik=P8OAzrJEZS%2biuw&riu=http%3a%2f%2fjourneyz.co%2fwp-content%2fuploads%2f2019%2f09%2fGolden-Gate-Bridge.jpg&ehk=WX9eb2rUUjWBLLrsG2MQZLOMk2wtreV%2bT1Qq1tARk4s%3d&risl=&pid=ImgRaw&r=0);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+button {
+    border: none;
+    transition: all 50ms ease-in-out;
+    cursor: pointer;
+    padding: 8px 25px;
+    border-radius: 999px;
+    color: #fff;
+    background-color: #00bfff;
+}
+
+button:hover {
+    box-shadow: 2px 2px 2px rgba($color: #000000, $alpha: 0.2);
+}
+
+button:active {
+    transform: scale(0.9);
 }

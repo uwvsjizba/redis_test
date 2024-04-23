@@ -1,10 +1,189 @@
 <!DOCTYPE html>
 <html lang="zh">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>redis缓存验证码</title>
-    </head>
-    <body>
-    </body>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>redis缓存验证码</title>
+</head>
+
+<body>
+    <header class="header">
+        <span>Redis缓存验证码</span>
+    </header>
+    <section class="container">
+        <div id="section-head">
+            <div class="login" onclick="channel()">
+                <span>登录</span>
+            </div>
+            <div class="register" onclick="channel()">
+                <span>注册</span>
+            </div>
+        </div>
+        <div id="form-container">
+            <div id="login-form">
+                <div class="login-input-item">
+                    <div class="item-title">用户名</div>
+                    <div class="item-input">
+                        <input type="text" name="" id="loginName" title="username">
+                    </div>
+                </div>
+                <div class="login-input-item">
+                    <div class="item-title">密码</div>
+                    <div class="item-input">
+                        <input type="text" name="" id="loginPwd" title="pwd">
+                    </div>
+                </div>
+                <div class="login-input-item">
+                    <!-- <div class="item-title">登录</div> -->
+                    <div class="btn-box">
+                        <button type="button" onclick="login()">登录</button>
+                    </div>
+                </div>
+            </div>
+            <div class="register-form">
+                <div class="register-input-item">
+                    <div class="item-title">用户名</div>
+                    <div class="item-input">
+                        <input type="text" name="" id="registername" title="username">
+                    </div>
+                </div>
+                <div class="register-input-item">
+                    <div class="item-title">密码</div>
+                    <div class="item-input">
+                        <input type="text" name="" id="registerPwd" title="pwd">
+                    </div>
+                </div>
+                <div class="register-input-item">
+                    <div class="item-title">确认密码</div>
+                    <div class="item-input">
+                        <input type="text" name="" id="confirmPwd" title="confirmPwd">
+                    </div>
+                </div>
+                <div class="register-input-item">
+                    <div class="item-title">验证码</div>
+                    <div class="item-input">
+                        <input type="text" name="" id="auth" class="authInput" title="auth">
+                    </div>
+                    <div class="btn-box">
+                        <button type="button" class="authbtn" onclick="getAuth()">获取验证码</button>
+                    </div>
+                </div>
+                <div class="register-input-item">
+                    <div class="btn-box">
+                        <button type="button" onclick="register()">注册</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        const loginForm = document.querySelector("#login-form");
+        const registerForm = document.querySelector(".register-form");
+        const authbtn = document.querySelector(".authbtn");
+
+        let isLogin = true;
+        const channel = () => {
+            isLogin = !isLogin;
+            if (isLogin) {
+                loginForm.style.display = "block";
+
+                registerForm.style.display = "none";
+            } else {
+                loginForm.style.display = "none";
+                registerForm.style.display = "block";
+            }
+        }
+        const getAuth = ()=>{
+            let username = registername.value;
+            if(username.length < 6){
+                alert("请先填写用户信息再获取验证码！");
+                return ;
+            }
+            authbtn.setAttribute("disabled", "disabled")
+            let time = 5;
+            let timer = setInterval(()=>{
+                authbtn.textContent = (time--) + " s 后重试";
+                if(time === 0){
+                    authbtn.textContent = "获取验证码";
+                    authbtn.removeAttribute("disabled");
+                    clearInterval(timer);
+                }
+            }, 1000);
+            fetch("http://localhost:3000/user/getAuth?username="+ username)
+            .then((res)=>res.json())
+            .then((data)=>{
+                if(data.state === "error"){
+                    throw new Error(data.msg);
+                }
+                alert(data.msg + "，你的验证码是：" + data.data.auth);
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        }
+        const login = ()=>{
+            let username = loginName.value;
+            let pwd = loginPwd.value;
+            fetch("http://localhost:3000/user/login",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username,
+                    pwd,
+                })
+            })
+            .then((res)=>res.json())
+            .then((data)=>{
+                if(data.state==="error"){
+                    throw new Error(data.msg);
+                }
+                alert(data.msg);
+            })
+            .catch((err)=>{
+                alert(err)
+            })
+        };
+        const register = ()=>{
+            let username = registername.value;
+            let pwd = registerPwd.value;
+            let surePwd = confirmPwd.value;
+            let Auth = auth.value;
+            if(pwd !== surePwd) {
+                alert("两次输入的密码不一致！");
+                return ;
+            }
+            if(Auth.length !== 4){
+                alert("请检查验证码是否正确！");
+                return ;
+            }
+
+            fetch("http://localhost:3000/user/register",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username,
+                    pwd,
+                    auth: Auth
+                })
+            })
+            .then((res)=>res.json())
+            .then((data)=>{
+                if(data.state==="error"){
+                    throw new Error(data.msg);
+                }
+                alert(data.msg);
+            })
+            .catch((err)=>{
+                alert(err)
+            })
+        };
+
+    </script>
+</body>
+
 </html>
