@@ -16,7 +16,7 @@
 .container {
     overflow: hidden;
     width: max-content;
-    min-height: 500px;
+    // min-height: 500px;
     border-radius: 15px;
     padding: 20px 40px;
     position: absolute;
@@ -38,7 +38,7 @@
             width: 70px;
             // height: ;
             padding: 10px;
-            color: #00bfff;
+            color: #72d9e2;
             font-size: 20px;
             line-height: 30px;
             border-radius: 10px;
@@ -51,6 +51,10 @@
                 font-size: 25px;
                 font-weight: 600;
             }
+        }
+        .register {
+            font-size: 22px;
+            color: #00bfff;
         }
         .login:hover,
         .register:hover {
@@ -121,7 +125,6 @@
 * {
     box-sizing: border-box;
     user-select: none;
-
 }
 
 input {

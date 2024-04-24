@@ -31,7 +31,7 @@
                 <div class="login-input-item">
                     <div class="item-title">密码</div>
                     <div class="item-input">
-                        <input type="text" name="" id="loginPwd" title="pwd">
+                        <input type="password" name="" id="loginPwd" title="pwd">
                     </div>
                 </div>
                 <div class="login-input-item">
@@ -43,7 +43,7 @@
             </div>
             <div class="register-form">
                 <div class="register-input-item">
-                    <div class="item-title">用户名</div>
+                    <div class="item-title">手机号</div>
                     <div class="item-input">
                         <input type="text" name="" id="registername" title="username">
                     </div>
@@ -51,13 +51,13 @@
                 <div class="register-input-item">
                     <div class="item-title">密码</div>
                     <div class="item-input">
-                        <input type="text" name="" id="registerPwd" title="pwd">
+                        <input type="password" name="" id="registerPwd" title="pwd">
                     </div>
                 </div>
                 <div class="register-input-item">
                     <div class="item-title">确认密码</div>
                     <div class="item-input">
-                        <input type="text" name="" id="confirmPwd" title="confirmPwd">
+                        <input type="password" name="" id="confirmPwd" title="confirmPwd">
                     </div>
                 </div>
                 <div class="register-input-item">
@@ -97,7 +97,7 @@
         const getAuth = ()=>{
             let username = registername.value;
             if(username.length < 6){
-                alert("请先填写用户信息再获取验证码！");
+                alert("请先填写手机号再获取验证码！");
                 return ;
             }
             authbtn.setAttribute("disabled", "disabled")
@@ -110,13 +110,14 @@
                     clearInterval(timer);
                 }
             }, 1000);
-            fetch("http://localhost:3000/user/getAuth?username="+ username)
+            fetch("http://localhost:3000/user/getCode?phone="+ username)
             .then((res)=>res.json())
             .then((data)=>{
                 if(data.state === "error"){
-                    throw new Error(data.msg);
+                    alert(data.msg);
+                    throw new Error("data.msg");
                 }
-                alert(data.msg + "，你的验证码是：" + data.data.auth);
+                alert(data.msg + "，你的验证码是：" + data.data.code);
             })
             .catch((err)=>{
                 console.log(err);
@@ -155,7 +156,7 @@
                 alert("两次输入的密码不一致！");
                 return ;
             }
-            if(Auth.length !== 4){
+            if(Auth.length !== 6){
                 alert("请检查验证码是否正确！");
                 return ;
             }
