@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="./js/echart.js"></script> 
+        <script src="./js/chain.js"></script> 
+        <script src="./js/jQuery.js"></script> 
+        <title>
+            china-map
+        </title>
+    </head>
+    
+ <body style="background-color: transparent">
+    <div class="container" style="height: 100% ;width: 100%">
+    <!--这里利用bootstrap的样式：
+                            一个页面布局为12份，id=main的代码块展示我们的中国地图；
+                            class：col-md-9 代表这个div占9份；col-md-3 占3份-->
+        <div id= "content-left" class="col-md-9"  style="margin-top: 20px">
+            <div id="main" style="width: 100%;height:800px"></div>
+        </div>
+
+        <div class="col-md-3 table-responsive">
+            <!--            表格展示销量-->
+            <table class="table table-bordered" style="margin-top: 20px">
+                <thead>
+                <tr>
+                    <th style="color: #FFFFFF">地区</th>
+                    <th style="color: #FFFFFF">销量(台)</th>
+                    <!--                    <th style="color: #FFFFFF">类型</th>      ?-->
+                </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+    
+    </body>
+    <script>
+        // <!--    echarts初始化：获取myChart对象-->
+            var myChart=echarts.init(document.getElementById('main'));
+        
+            $(function(){
+                //获取表格对象
+                let table=$("#tbody");
+                //发生ajax请求，到json文件，data为返回的数据，将数据封装到空数组中；直接拿来用即可
+                $.ajax({
+                    url: "http://localhost:3000/HTML/json/RobotSales",//json文件位置，文件名
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        let res=[];//自定义一个空数组接收请求回来的json数据
+                        for(let i=0;i<data.length;i++){
+                            res.push({name:data[i].name,
+                                value: data[i].value,
+                                sales:data[i].Sales//若json文件中自己定义了其他信息，在下边直接以k:v形式进行罗列即可；但是主要“,”
+                            });
+                        };
+                        //重点：将封装的json数据传递到dealWithData函数中进行渲染处理使用
+                        dealWithData(res);
+                        //===销售表格===
+                        let row=[];
+                        for (let i=0; i<data.length; i++) {
+                            let name=data[i].name;
+                            let sales=data[i].Sales;
+                            let text=data[i].text;
+                            //拼接表格的行和列
+                            row.push("<tr><td>"+name+"</td>"+
+                                '<td>'+sales+'</td>'+text+'</tr>');
+                        }
+                        table.append(row.join());//追加到table表格中
+                    }
+                });
+            })
+        
+            function dealWithData(data){
+                let dataValue=data;
+                option= {
+                    //设置一个标题
+                    title: {
+                        text: '党员地区分布',
+                        x: 'center',
+                        textStyle: {
+                            color: '#fff',
+                            fontSize:"40"
+                        }
+                    },
+                    //鼠标划过省份下弹框
+                    tooltip: {
+                        show: true,
+                        triggerOn:'click'//点击生效
+                    },
+                    geo: {
+                        map: 'china',//必须写
+                        roam:false,// 拖拽功能；自选关闭开启
+                        zoom: 1.235,//地图缩放比例
+                        center: [105, 36],//地图位置
+                        //地图省份的样式；包括板块颜色和边框颜色
+                        itemStyle: {
+                            areaColor: '#f5f2f2',
+                            borderColor: "#835f5f",
+                        },
+                        //省份字体样式；包括是否展示，字体大小和颜色
+                        label: {
+                            normal: {
+                                show:true,
+                                fontSize: "11.5",
+                                color: "rgb(107,102,102)"
+                            }
+                        },
+                        //鼠标划过的高亮设置；包括省份板块颜色和字体等
+                        emphasis: {
+                            itemStyle: {
+                                areaColor: '#FFA07A',
+                            },
+                            label: {
+                                show: true,
+                                color:"rgb(255,255,255)"
+                            }
+                        }
+                    },
+    
+                    series: [
+                        //我们的散点
+                        {
+                            name: '销量',
+                            type: 'scatter',
+                            coordinateSystem: 'geo',//坐标系统
+                            data: dataValue,
+                            //地图点的样式；颜色，大小
+                            symbolSize: 12,
+                            itemStyle: {
+                                color: "#f13434",
+                                shadowBlur: 2,
+                                shadowColor: "#333"
+                            },
+                            //鼠标点击散点的下弹框
+                            tooltip: {
+                                show: true,
+                                triggerOn:"click",
+                                formatter: function(data1) {
+                                    let data2=data1.data;
+                                    return"<b>销量<b><br>"+data2.name+data2.sales
+                                }
+                            },
+                        },
+    
+                        //涟漪特效
+                        {
+                            name: "产品销量",
+                            type: "effectScatter",
+                            coordinateSystem: "geo",
+                            data:dataValue,//传入的地图点数据
+                            symbolSize: 6,//涟漪大小
+                            showEffectOn: "render",
+                            //涟漪效应
+                            rippleEffect: {
+                                brushType: "stroke",
+                                color: "#f13434",
+                                period: 10,//周期
+                                scale: 10//规模
+                            },
+                            hoverAnimation: true,//悬停动画
+                            //地图点样式
+                            label: {
+                                formatter: "{b}",
+                                position: "top",
+                                show: true,
+                                fontSize: "10",
+                            },
+                            itemStyle: {
+                                color: "#f13434",
+                                shadowBlur: 2,
+                                shadowColor: "#333"
+                            },
+                            //鼠标点击散点的下弹框
+                            tooltip: {
+                                show: true,
+                                triggerOn:"click",
+                                formatter: function(data1) {
+                                    console.log(data1)
+                                    let data2=data1.data;
+                                    return"<b>销量<b><br>"+data2.name+data2.sales
+                                }
+                            },
+                            zlevel: 1
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+            }
+    
+        
+
+            //点击事件
+            myChart.on('click', function(param) {
+                let data=param.data;
+                if (data){
+                    console.log("城市："+data.name+";坐标："+data.value+";销量："+data.sales);
+                }
+            });
+        
+
+        </script>
+       
+</html>
