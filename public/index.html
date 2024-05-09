@@ -94,39 +94,39 @@
                 registerForm.style.display = "block";
             }
         }
-        const getAuth = ()=>{
+        const getAuth = () => {
             let username = registername.value;
-            if(username.length < 6){
+            if (username.length < 6) {
                 alert("请先填写手机号再获取验证码！");
-                return ;
+                return;
             }
             authbtn.setAttribute("disabled", "disabled")
             let time = 5;
-            let timer = setInterval(()=>{
+            let timer = setInterval(() => {
                 authbtn.textContent = (time--) + " s 后重试";
-                if(time === 0){
+                if (time === 0) {
                     authbtn.textContent = "获取验证码";
                     authbtn.removeAttribute("disabled");
                     clearInterval(timer);
                 }
             }, 1000);
-            fetch("http://localhost:3000/user/getCode?phone="+ username)
-            .then((res)=>res.json())
-            .then((data)=>{
-                if(data.state === "error"){
-                    alert(data.msg);
-                    throw new Error("data.msg");
-                }
-                alert(data.msg + "，你的验证码是：" + data.data.code);
-            })
-            .catch((err)=>{
-                console.log(err);
-            })
+            fetch("http://localhost:3000/user/getCode?phone=" + username)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.state === "error") {
+                        alert(data.msg);
+                        throw new Error("data.msg");
+                    }
+                    alert(data.msg + "，你的验证码是：" + data.data.code);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
         }
-        const login = ()=>{
+        const login = () => {
             let username = loginName.value;
             let pwd = loginPwd.value;
-            fetch("http://localhost:3000/user/login",{
+            fetch("http://localhost:3000/user/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -136,32 +136,32 @@
                     pwd,
                 })
             })
-            .then((res)=>res.json())
-            .then((data)=>{
-                if(data.state==="error"){
-                    throw new Error(data.msg);
-                }
-                alert(data.msg);
-            })
-            .catch((err)=>{
-                alert(err)
-            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.state === "error") {
+                        throw new Error(data.msg);
+                    }
+                    alert(data.msg);
+                })
+                .catch((err) => {
+                    alert(err)
+                })
         };
-        const register = ()=>{
+        const register = () => {
             let username = registername.value;
             let pwd = registerPwd.value;
             let surePwd = confirmPwd.value;
             let Auth = auth.value;
-            if(pwd !== surePwd) {
+            if (pwd !== surePwd) {
                 alert("两次输入的密码不一致！");
-                return ;
+                return;
             }
-            if(Auth.length !== 6){
+            if (Auth.length !== 6) {
                 alert("请检查验证码是否正确！");
-                return ;
+                return;
             }
 
-            fetch("http://localhost:3000/user/register",{
+            fetch("http://localhost:3000/user/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -172,17 +172,34 @@
                     auth: Auth
                 })
             })
-            .then((res)=>res.json())
-            .then((data)=>{
-                if(data.state==="error"){
-                    throw new Error(data.msg);
-                }
-                alert(data.msg);
-            })
-            .catch((err)=>{
-                alert(err)
-            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.state === "error") {
+                        throw new Error(data.msg);
+                    }
+                    alert(data.msg);
+                })
+                .catch((err) => {
+                    alert(err)
+                })
         };
+
+        let count = 110;
+        const prodId = 1234;
+        let timer = setInterval(() => {
+            if (count > 0) {
+                fetch("http://localhost:3000/secKill/secKillForRedis?prodId=" + prodId)
+                    .then((res) => {
+                        return res.json();
+                    })
+                    .then((data) => {
+                        console.log(data);
+                    })
+                    count --;
+            } else {
+                clearInterval(timer);
+            }
+        }, 200);
 
     </script>
 </body>

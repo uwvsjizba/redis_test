@@ -6,29 +6,32 @@ const options = {
   port: redisOptions.port,
   password: redisOptions.password,
   detect_buffers: redisOptions.detect_buffers, // 传入buffer 返回也是buffer 否则会转换成String
-  retry_strategy: function (options) {
-    // 重连机制
-    if (options.error && options.error.code === "ECONNREFUSED") {
-      // End reconnecting on a specific error and flush all commands with
-      // a individual error
-      return new Error("The server refused the connection");
-    }
-    if (options.total_retry_time > 1000 * 60 * 60) {
-      // End reconnecting after a specific timeout and flush all commands
-      // with a individual error
-      return new Error("Retry time exhausted");
-    }
-    if (options.attempt > 10) {
-      // End reconnecting with built in error
-      return undefined;
-    }
-    // reconnect after
-    return Math.min(options.attempt * 100, 3000);
-  }
+  // retry_strategy: function (options) {
+  //   // 重连机制
+  //   if (options.error && options.error.code === "ECONNREFUSED") {
+  //     // End reconnecting on a specific error and flush all commands with
+  //     // a individual error
+  //     return new Error("The server refused the connection");
+  //   }
+  //   if (options.total_retry_time > 1000 * 60 * 60) {
+  //     // End reconnecting after a specific timeout and flush all commands
+  //     // with a individual error
+  //     return new Error("Retry time exhausted");
+  //   }
+  //   if (options.attempt > 10) {
+  //     // End reconnecting with built in error
+  //     return undefined;
+  //   }
+  //   // reconnect after
+  //   return Math.min(options.attempt * 100, 3000);
+  // }
 }
 
 // 生成redis的client
-const client = redis.createClient(options)
+const client = redis.createClient(options);
+
+
+
 
 const setHashMap = (key, obj)=>{
   return new Promise((resolve, reject)=>{
@@ -40,11 +43,32 @@ const setHashMap = (key, obj)=>{
       }
     });
   })
-} 
+};
 
 
+ const evalsha = async function(luaScript, key_num, ...args){
+  return new Promise((resolve, reject)=>{
+    client.evalsha(luaScript, key_num, ...args, (err, res)=>{
+      if(err){
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
 
-const user = client.auth_user;
+
+const scriptLoad = async (script)=>{
+  return new Promise((resolve, reject)=>{
+    client.script('load', script, (err, sha)=>{
+      if(err) {
+        reject(err);
+      }
+      resolve(sha);
+    });
+  });
+}
 // 存储值
 const setValue = (key, value) => {
   if (typeof value === 'string') {
@@ -94,5 +118,6 @@ module.exports = {
   getValue,
   getHValue,
   setHashMap,
-  user
+  evalsha,
+  scriptLoad
 }
