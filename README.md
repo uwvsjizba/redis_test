@@ -1,6 +1,9 @@
-# redis_test
-基于express实现redis缓存验证码
+# redis_test *redis课后作业*
 
-# 基于 ***express*** 实现 ***redis*** 缓存验证码  
+## 基于 ***Express*** 与 ***redis*** 实现以下功能
 
-`const app = express()`
+- 缓存验证码
+- 实现秒杀功能
+
+
+
